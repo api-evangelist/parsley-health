@@ -1,0 +1,69 @@
+generated: '2026-08-02'
+method: searched
+source: >-
+  https://www.parsleyhealth.com/notice-of-privacy-practices,
+  https://www.parsleyhealth.com/telehealth-informed-consent,
+  https://www.parsleyhealth.com/privacy
+note: >-
+  Parsley Health has no public API and no OpenAPI, so there is nothing to derive
+  API-level conformance from. What IS published and verifiable is a healthcare regulatory
+  posture: Parsley Medical publishes a HIPAA Notice of Privacy Practices declaring itself
+  an Affiliated Covered Entity, plus telehealth informed consent and electronic
+  communications consent documents. Those are recorded below. No SOC 2, ISO 27001,
+  HITRUST or other third-party security certification is published on any Parsley Health
+  page, and no trust center exists — those entries are recorded as not-found, not as
+  failures.
+standards:
+- id: hipaa
+  name: Health Insurance Portability and Accountability Act
+  conforms: true
+  evidence: >-
+    "HIPAA Notice of Privacy Practices – PARSLEY MEDICAL Affiliated Covered Entity";
+    designates a HIPAA Privacy Officer reachable at (833) 447-2775. Last updated
+    2021-11-10.
+  url: https://www.parsleyhealth.com/notice-of-privacy-practices
+- id: telehealth-informed-consent
+  name: Telehealth informed consent disclosure
+  conforms: true
+  evidence: Dedicated published telehealth informed consent document.
+  url: https://www.parsleyhealth.com/telehealth-informed-consent
+- id: e-sign-electronic-communications-consent
+  name: Electronic communications / E-SIGN consent
+  conforms: true
+  evidence: Dedicated published electronic communications consent document.
+  url: https://www.parsleyhealth.com/electronic-communications-consent
+- id: state-clinical-practice-terms
+  name: Per-state clinical membership terms
+  conforms: true
+  evidence: >-
+    Separate clinical membership terms published for each US state of operation
+    (/clinical-membership-terms/<state>), reflecting state-by-state corporate practice of
+    medicine and telehealth rules.
+  url: https://www.parsleyhealth.com/clinical-membership-terms
+- id: soc2
+  conforms: false
+  evidence: No SOC 2 report or attestation published on any public Parsley Health page.
+- id: iso27001
+  conforms: false
+  evidence: No ISO 27001 certification published.
+- id: hitrust
+  conforms: false
+  evidence: No HITRUST CSF certification published.
+- id: fhir
+  conforms: false
+  evidence: >-
+    No FHIR endpoint, no patient-access API and no CMS Interoperability/Patient Access
+    surface published. Parsley operates as a direct-pay/in-network clinical practice, not
+    a payer or certified EHR developer.
+- id: oauth2
+  conforms: false
+  evidence: No public OAuth 2.0 authorization server; /.well-known/oauth-authorization-server 404.
+- id: openid-connect
+  conforms: false
+  evidence: /.well-known/openid-configuration returns 404 on every host.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on every host.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: No public API to evaluate.

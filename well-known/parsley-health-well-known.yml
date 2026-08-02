@@ -1,0 +1,89 @@
+generated: '2026-08-02'
+method: probed
+source: live HTTP probe of Parsley Health web and member-application hosts
+note: >-
+  No /.well-known/ discovery documents are published on any Parsley Health host, and no
+  llms.txt is published. Every probe against www.parsleyhealth.com returned a real 404.
+  The member-application hosts my.parsleyhealth.com and app.parsleyhealth.com are
+  single-page applications behind a Google Frontend catch-all that answer HTTP 200 with
+  text/html for EVERY path, including /.well-known/agent-card.json, /.well-known/agent.json
+  and /openapi.json. Those 200s are SPA shells, not documents, and are recorded here as
+  rejected false positives rather than hits. This is an honest negative result, not a gap
+  in probing. No agent card was written (a2a/ is intentionally absent).
+hosts:
+- host: https://www.parsleyhealth.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /llms.txt
+    status: 404
+  - path: /openapi.json
+    status: 404
+  - path: /api-docs
+    status: 404
+  - path: /robots.txt
+    status: 200
+  - path: /sitemap.xml
+    status: 200
+- host: https://my.parsleyhealth.com
+  note: >-
+    SPA catch-all. Content-Type text/html on every path; all 200s below are the app shell
+    and were REJECTED as false positives per the A2A/OpenAPI probe discipline.
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-not-json
+  - path: /.well-known/security.txt
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-not-rfc9116
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-does-not-parse-as-openapi
+  - path: /graphql
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-no-graphql-endpoint
+- host: https://app.parsleyhealth.com
+  note: SPA catch-all, same behaviour as my.parsleyhealth.com.
+  documents:
+  - path: /.well-known/agent-card.json
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-not-json
+  - path: /openapi.json
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell-does-not-parse-as-openapi
+hosts_not_resolving:
+- api.parsleyhealth.com
+- developer.parsleyhealth.com
+- developers.parsleyhealth.com
+- docs.parsleyhealth.com
+- status.parsleyhealth.com
+- trust.parsleyhealth.com
+summary:
+  documents_found: 0
+  agent_card_found: false
+  openapi_found: false
+  llms_txt_found: false

@@ -1,0 +1,70 @@
+generated: '2026-08-02'
+method: searched
+source: >-
+  npm registry search (registry.npmjs.org), PyPI, RubyGems, Packagist, plus the
+  github.com/parsleyhealth public repository listing
+note: >-
+  Parsley Health publishes NO client SDK for any API — it has no public API. The npm
+  packages below are genuinely first-party (published under the @parsleyhealth scope or
+  authored by the company) but they are internal engineering tooling: shared linter
+  configuration. They are recorded for completeness and deliberately do NOT earn an
+  `SDKs` pointer in apis.yml, because none of them is an API client library and the
+  sdk_count scoring check must not be satisfied by lint configs. PyPI, RubyGems,
+  Packagist, crates.io, NuGet, Maven Central and pkg.go.dev returned no first-party
+  Parsley Health packages.
+packages:
+- language: javascript
+  registry: npm
+  name: "@parsleyhealth/tslint-config"
+  url: https://www.npmjs.com/package/@parsleyhealth/tslint-config
+  install: npm install @parsleyhealth/tslint-config
+  official: true
+  kind: developer-tooling
+  is_api_client: false
+  description: Shared TSLint configuration for Parsley Health
+- language: javascript
+  registry: npm
+  name: "@parsleyhealth/eslint-config-cephalopod"
+  url: https://www.npmjs.com/package/@parsleyhealth/eslint-config-cephalopod
+  install: npm install @parsleyhealth/eslint-config-cephalopod
+  official: true
+  kind: developer-tooling
+  is_api_client: false
+  description: Parsley Health Cephalopod eslint configuration
+- language: javascript
+  registry: npm
+  name: eslint-config-parsley
+  url: https://www.npmjs.com/package/eslint-config-parsley
+  install: npm install eslint-config-parsley
+  official: true
+  kind: developer-tooling
+  is_api_client: false
+  description: eslint shareable config for Parsley Health
+registries_probed:
+- registry: npm
+  result: 3 first-party packages, all developer tooling
+- registry: pypi
+  result: none
+- registry: rubygems
+  result: none
+- registry: packagist
+  result: none
+- registry: maven-central
+  result: none
+- registry: nuget
+  result: none
+- registry: pkg.go.dev
+  result: none
+- registry: crates.io
+  result: none
+source_repositories:
+  org: https://github.com/parsleyhealth
+  public_repos: 12
+  contact: engineering@parsleyhealth.com
+  note: >-
+    All 12 public repositories are internal engineering infrastructure — a standard
+    Node.js Dockerfile, GitHub Actions (Helm deploy, Datadog, add-pr-comment,
+    cloud-sql-proxy-goose, composite actions), a commitizen changelog adapter, a Cypress
+    IAP plugin, recruiting fixtures, a Go basics repo, and a fork of Apollo Router. The
+    Apollo Router fork indicates internal Apollo Federation GraphQL use; that GraphQL
+    surface is not publicly exposed or documented.

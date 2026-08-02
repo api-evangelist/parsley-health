@@ -1,17 +1,67 @@
 aid: parsley-health
 name: Parsley Health
-description: 'Parsley Health is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Parsley Health is a physician-led virtual and in-person medical practice founded in
+  2016 by Dr. Robin Berzin, MD, headquartered at 126 5th Ave, New York, NY, that
+  delivers functional medicine as a membership-based primary and specialty care service.
+  Members are matched with board-certified MD, DO, NP or PA clinicians who hold
+  additional functional medicine fellowship training through Parsley and the Institute
+  for Functional Medicine, and are supported by functional nutrition coaches, an RN care
+  manager and a care coordinator. Care programs cover gut and digestive health, hormone
+  balance, autoimmune and inflammatory conditions, unexplained symptoms, mental and
+  emotional health, heart and metabolic health, longevity, perimenopause and menopause,
+  fertility, pregnancy and postpartum, and environmental exposure. The membership bundles
+  five medical visits, two nutrition coaching sessions, advanced diagnostic lab testing,
+  a personalized care plan, a symptom tracking dashboard and unlimited messaging, priced
+  at $150/month or $1,500/year with insurance and $275/month or $2,750/year self-pay.
+  Parsley is available nationwide via telehealth with in-person care in New York City and
+  Los Angeles, is in network with major commercial insurers including Aetna, Cigna,
+  UnitedHealthcare, BlueCross BlueShield, Humana and Centene, and also operates a
+  direct-to-consumer supplement store. Parsley Health is a consumer healthcare service,
+  not an API provider: it publishes no developer portal, no public API reference and no
+  machine-readable API specification. Its public GitHub organization contains internal
+  engineering tooling (Docker images, GitHub Actions, lint configs, an Apollo Router
+  fork) rather than any client SDK, and its member application at my.parsleyhealth.com is
+  an authenticated single-page app with no documented public API surface.
+accessModel:
+  pricing: paid
+  onboarding: signup
+  trial: false
+  try_now: false
+  public: false
+  label: Consumer Membership
+  confidence: high
+  source:
+  - https://www.parsleyhealth.com/care
+  generated: '2026-08-02'
+  method: searched
+image: https://cdn-builder.parsleyhealth.com/api/v1/image/assets%2F996895949aaa465aa438b22f75b680b6%2F3ca4c568b1cc4dc7b064ff122217abe6
 url: https://raw.githubusercontent.com/api-evangelist/parsley-health/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
 x-tier: stub
-x-tier-reason: harvest
+x-tier-reason: no-public-api-surface
+x-founded: '2016'
+x-founder: Robin Berzin, MD
+x-headquarters: New York, NY, United States
 specificationVersion: '0.20'
 created: '2026-08-02'
 modified: '2026-08-02'
 tags:
 - Company
+- Health
+- Healthcare
+- Telehealth
+- Telemedicine
+- Functional Medicine
+- Primary Care
+- Wellness
+- Nutrition
+- Diagnostics
+- Lab Testing
+- Membership
+- Digital Health
+- Consumer Health
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -20,4 +70,53 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
+  url: https://www.parsleyhealth.com/
+- type: Blog
+  url: https://www.parsleyhealth.com/blog
+- type: Pricing
+  url: https://www.parsleyhealth.com/care
+- type: SignUp
+  url: https://www.parsleyhealth.com/join/get-care
+- type: Login
+  url: https://my.parsleyhealth.com/login
+- type: TermsOfService
+  url: https://www.parsleyhealth.com/terms-of-use
+- type: PrivacyPolicy
+  url: https://www.parsleyhealth.com/privacy
+- type: Support
+  url: https://www.parsleyhealth.com/contact
+- type: HelpCenter
+  url: https://www.parsleyhealth.com/faq
+- type: GitHubOrganization
+  url: https://github.com/parsleyhealth
+- type: Compliance
+  url: https://www.parsleyhealth.com/notice-of-privacy-practices
+- type: Careers
+  url: https://www.parsleyhealth.com/careers
+- type: Press
+  url: https://www.parsleyhealth.com/press
+- type: Locations
+  url: https://www.parsleyhealth.com/locations
+- type: Products
+  url: https://www.parsleyhealth.com/store/collections/all
+- type: Reviews
+  url: https://www.parsleyhealth.com/reviews
+- type: EditorialPolicy
+  url: https://www.parsleyhealth.com/editorial-policy
+- type: SecondaryMarket
   url: https://forgeglobal.com/parsley-health_stock/
+- type: Packages
+  url: packages/parsley-health-packages.yml
+- type: Conformance
+  url: conformance/parsley-health-conformance.yml
+- type: LLMsTxt
+  url: llms/parsley-health-llms.txt
+- type: WellKnownProbe
+  url: well-known/parsley-health-well-known.yml
+- type: DomainSecurity
+  url: security/parsley-health-domain-security.yml
+x-enrichment:
+  date: '2026-08-02'
+  status: minimal
+  artifacts_added: 5
+  pass: local-v1
