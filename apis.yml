@@ -17,12 +17,21 @@ description: >-
   Parsley is available nationwide via telehealth with in-person care in New York City and
   Los Angeles, is in network with major commercial insurers including Aetna, Cigna,
   UnitedHealthcare, BlueCross BlueShield, Humana and Centene, and also operates a
-  direct-to-consumer supplement store. Parsley Health is a consumer healthcare service,
-  not an API provider: it publishes no developer portal, no public API reference and no
-  machine-readable API specification. Its public GitHub organization contains internal
-  engineering tooling (Docker images, GitHub Actions, lint configs, an Apollo Router
-  fork) rather than any client SDK, and its member application at my.parsleyhealth.com is
-  an authenticated single-page app with no documented public API surface.
+  direct-to-consumer supplement store. Parsley Health is a consumer healthcare service
+  rather than a developer platform: it publishes no developer portal, no API reference, no
+  API keys and no OpenAPI, and its public GitHub organization contains internal
+  engineering tooling (Docker images, GitHub Actions, lint configs, an Apollo Router fork)
+  rather than any client SDK. It does, however, serve real agent-callable surfaces on its
+  supplement store at store.parsleyhealth.com: a live anonymous Universal Commerce
+  Protocol MCP endpoint exposing thirteen catalog, cart, checkout and order tools, an
+  anonymous Shopify Storefront GraphQL endpoint, an llms.txt and agents.md written for
+  agents, and OAuth 2.0 / OpenID Connect discovery documents. Those surfaces are provided
+  by the Shopify commerce platform under Parsley Health's own hostname, cover retail
+  supplement purchase only, and are governed by a published rule that agents must not
+  complete payment without contemporaneous human approval. No clinical data is reachable
+  by machine: there is no FHIR endpoint, no patient-access API and no appointment, lab or
+  medical-record surface, and the member application at my.parsleyhealth.com remains an
+  authenticated single-page app with no documented public API.
 accessModel:
   pricing: paid
   onboarding: signup
@@ -40,13 +49,13 @@ url: https://raw.githubusercontent.com/api-evangelist/parsley-health/refs/heads/
 x-type: company
 x-source: harvest:secondary-market
 x-tier: stub
-x-tier-reason: no-public-api-surface
+x-tier-reason: platform-provided-agent-commerce-surface-only
 x-founded: '2016'
 x-founder: Robin Berzin, MD
 x-headquarters: New York, NY, United States
 specificationVersion: '0.20'
 created: '2026-08-02'
-modified: '2026-08-02'
+modified: '2026-08-15'
 tags:
 - Company
 - Health
@@ -62,7 +71,41 @@ tags:
 - Membership
 - Digital Health
 - Consumer Health
-apis: []
+- Ecommerce
+- Agentic Commerce
+- MCP
+- Supplements
+apis:
+- name: Parsley Health Store — UCP / MCP Agent Commerce
+  description: >-
+    The agent-callable surface of Parsley Health's direct-to-consumer supplement store.
+    A live, anonymous Universal Commerce Protocol MCP endpoint exposes thirteen tools for
+    catalog search, product lookup, cart construction, checkout and order retrieval, with
+    JSON Schema 2020-12 input schemas returned by tools/list. The same host serves an
+    anonymous Shopify Storefront GraphQL endpoint, unauthenticated storefront JSON
+    endpoints, an llms.txt and agents.md aimed at agents, a UCP merchant profile, and
+    OpenID Connect / OAuth 2.0 authorization-server discovery for store customer accounts.
+    The surface is platform-provided by Shopify under Parsley Health's own hostname (shop
+    id 24996151350) rather than engineered by Parsley Health, and it covers retail
+    supplement purchase only — no clinical, member, appointment or lab data is reachable.
+    Completing checkout requires contemporaneous human buyer approval per the store's own
+    published agent rules.
+  humanURL: https://store.parsleyhealth.com
+  baseURL: https://store.parsleyhealth.com/api/ucp/mcp
+  image: https://cdn-builder.parsleyhealth.com/api/v1/image/assets%2F996895949aaa465aa438b22f75b680b6%2F3ca4c568b1cc4dc7b064ff122217abe6
+  tags:
+  - Agentic Commerce
+  - MCP
+  - Ecommerce
+  - GraphQL
+  - Supplements
+  properties:
+  - type: GraphQL
+    url: graphql/parsley-health-storefront-graphql.yml
+  - type: Documentation
+    url: https://store.parsleyhealth.com/agents.md
+  - type: LLMsTxt
+    url: llms/parsley-health-store-llms.txt
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -86,6 +129,8 @@ common:
 - type: Support
   url: https://www.parsleyhealth.com/contact
 - type: HelpCenter
+  url: https://help.parsleyhealth.com
+- type: FAQ
   url: https://www.parsleyhealth.com/faq
 - type: GitHubOrganization
   url: https://github.com/parsleyhealth
@@ -111,12 +156,36 @@ common:
   url: conformance/parsley-health-conformance.yml
 - type: LLMsTxt
   url: llms/parsley-health-llms.txt
-- type: WellKnownProbe
+- type: WellKnown
   url: well-known/parsley-health-well-known.yml
 - type: DomainSecurity
   url: security/parsley-health-domain-security.yml
+- type: MCPServer
+  url: mcp/parsley-health-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/parsley-health-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Authentication
+  url: authentication/parsley-health-authentication.yml
+- type: OAuthScopes
+  url: scopes/parsley-health-scopes.yml
+- type: Conventions
+  url: conventions/parsley-health-conventions.yml
+- type: ErrorCatalog
+  url: errors/parsley-health-problem-types.yml
+- type: DataModel
+  url: data-model/parsley-health-data-model.yml
+- type: Lifecycle
+  url: lifecycle/parsley-health-lifecycle.yml
+- type: RateLimits
+  url: rate-limits/parsley-health-rate-limits.yml
+- type: Plans
+  url: plans/parsley-health-plans-pricing.yml
+- type: Store
+  url: https://store.parsleyhealth.com
 x-enrichment:
-  date: '2026-08-02'
-  status: minimal
-  artifacts_added: 5
+  date: '2026-08-15'
+  status: enriched
+  artifacts_added: 21
   pass: local-v1
