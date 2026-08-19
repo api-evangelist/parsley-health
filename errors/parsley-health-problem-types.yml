@@ -1,0 +1,44 @@
+generated: '2026-08-15'
+method: probed
+source: >-
+  Live error responses observed from https://store.parsleyhealth.com/api/ucp/mcp and
+  https://store.parsleyhealth.com/api/2026-01/graphql.json on 2026-08-15
+note: >-
+  Parsley Health publishes NO error reference of any kind. This catalog contains only
+  error shapes that were actually returned to a probe — nothing inferred and nothing
+  copied from vendor documentation. The envelope is JSON-RPC 2.0, not RFC 9457 problem
+  details; the MCP transport returns HTTP 422 alongside the JSON-RPC error object, so an
+  agent must read the body rather than trust the status code. Every failure reachable
+  anonymously today is a UCP agent-identity failure — no business-level error (out of
+  stock, payment declined, invalid address) could be reached without a resolvable agent
+  profile, so those remain unmapped rather than guessed.
+format: json-rpc-2.0
+rfc9457: false
+envelope:
+  mcp: '{"jsonrpc":"2.0","id":<id>,"error":{"code":<int>,"message":<string>,"data":{"code":<slug>,"content":<string>,"continue_url":<url>}}}'
+  graphql: '{"errors":[{"message":...}]}'
+  http_status_note: 'MCP errors are returned with HTTP 422; successful calls return HTTP 200.'
+problem_types:
+- code: -32001
+  data_code: invalid_profile_url
+  http_status: 422
+  message: UCP discovery failed
+  detail: 'Unable to fetch agent profile: Missing profile uri'
+  cause: The request omitted meta.ucp-agent.profile, which every UCP tool schema marks required.
+  remediation: Supply meta.ucp-agent.profile with a resolvable agent profile URI on every call.
+  observed: '2026-08-15'
+- code: -32001
+  data_code: profile_unreachable
+  http_status: 422
+  message: UCP discovery failed
+  detail: 'Unable to fetch agent profile: Http error'
+  cause: The supplied meta.ucp-agent.profile URI could not be fetched by the server.
+  remediation: Host a reachable UCP agent profile document at the URI supplied in meta.ucp-agent.profile.
+  observed: '2026-08-15'
+unmapped:
+- area: cart / checkout business errors
+  reason: Not reachable anonymously — every call is rejected at UCP agent-profile discovery before business logic runs.
+- area: rate limiting
+  reason: 'HTTP 429 is documented by the store as the exhaustion signal but was not triggered during probing; see rate-limits/parsley-health-rate-limits.yml.'
+- area: clinical / member application
+  reason: No public API, so no error surface exists to catalog.

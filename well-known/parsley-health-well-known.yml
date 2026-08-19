@@ -1,16 +1,82 @@
-generated: '2026-08-02'
+generated: '2026-08-15'
 method: probed
-source: live HTTP probe of Parsley Health web and member-application hosts
+source: live HTTP + DNS probes of every Parsley Health host (2026-08-15; supersedes 2026-08-02)
 note: >-
-  No /.well-known/ discovery documents are published on any Parsley Health host, and no
-  llms.txt is published. Every probe against www.parsleyhealth.com returned a real 404.
-  The member-application hosts my.parsleyhealth.com and app.parsleyhealth.com are
-  single-page applications behind a Google Frontend catch-all that answer HTTP 200 with
-  text/html for EVERY path, including /.well-known/agent-card.json, /.well-known/agent.json
-  and /openapi.json. Those 200s are SPA shells, not documents, and are recorded here as
-  rejected false positives rather than hits. This is an honest negative result, not a gap
-  in probing. No agent card was written (a2a/ is intentionally absent).
+  MATERIAL CHANGE FROM THE 2026-08-02 PASS. The marketing site and the member application
+  still publish nothing — every /.well-known/ path on www.parsleyhealth.com returns a real
+  404, and my./app.parsleyhealth.com are SPA catch-alls whose 200s are HTML shells and are
+  rejected here as false positives. What the earlier pass missed is a THIRD host:
+  store.parsleyhealth.com, the company's Shopify-hosted supplement store, which serves
+  REAL discovery documents — an llms.txt, an agents.md, a UCP merchant profile, and OpenID
+  Connect / OAuth 2.0 authorization-server metadata. Those documents are saved verbatim
+  alongside this index and they are what earns the WellKnown pointer in apis.yml. They are
+  platform-provided (Shopify serves them for every store) rather than authored by Parsley
+  Health, but they are served under Parsley Health's own hostname and describe Parsley
+  Health's own shop (id 24996151350). security.txt is still absent everywhere, so no
+  SecurityTxt pointer is emitted.
 hosts:
+- host: https://store.parsleyhealth.com
+  platform: Shopify (shop id 24996151350, parsley-health.myshopify.com)
+  documents:
+  - path: /.well-known/openid-configuration
+    status: 200
+    content_type: application/json
+    accepted: true
+    file: parsley-health-store-openid-configuration.json
+    note: 'Issuer https://shopify.com/authentication/24996151350 — Shopify per-shop authorization server.'
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    content_type: application/json
+    accepted: true
+    file: parsley-health-store-oauth-authorization-server.json
+    note: Byte-identical to the openid-configuration document.
+  - path: /.well-known/ucp
+    status: 200
+    content_type: application/json
+    accepted: true
+    file: parsley-health-store-ucp.json
+    note: 'Universal Commerce Protocol merchant profile — version 2026-04-08, MCP transport, merchant_name "Parsley Health".'
+  - path: /llms.txt
+    status: 200
+    content_type: text/markdown
+    accepted: true
+    file: ../llms/parsley-health-store-llms.txt
+  - path: /agents.md
+    status: 200
+    content_type: text/markdown
+    accepted: true
+    file: ../llms/parsley-health-store-agents.md
+    note: Near-duplicate of llms.txt; the store names agents.md as the canonical agent-facing description.
+  - path: /robots.txt
+    status: 200
+    content_type: text/plain
+    accepted: true
+    note: Carries explicit agent instructions — points at agents.md, the UCP discovery doc and the UCP/MCP endpoint, and forbids autonomous checkout.
+  - path: /products.json
+    status: 200
+    content_type: application/json
+    accepted: true
+    note: 30 products; unauthenticated catalog JSON.
+  - path: /cart.js
+    status: 200
+    content_type: text/javascript
+    accepted: true
+  - path: /sitemap.xml
+    status: 200
+    content_type: application/xml
+    accepted: true
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /openapi.json
+    status: 404
 - host: https://www.parsleyhealth.com
   documents:
   - path: /.well-known/security.txt
@@ -18,6 +84,8 @@ hosts:
   - path: /.well-known/openid-configuration
     status: 404
   - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
     status: 404
   - path: /.well-known/api-catalog
     status: 404
@@ -31,16 +99,44 @@ hosts:
     status: 404
   - path: /openapi.json
     status: 404
-  - path: /api-docs
+  - path: /api
+    status: 404
+  - path: /developers
+    status: 404
+  - path: /security
+    status: 404
+  - path: /trust
     status: 404
   - path: /robots.txt
     status: 200
   - path: /sitemap.xml
     status: 200
+- host: https://help.parsleyhealth.com
+  platform: Help Scout Docs
+  documents:
+  - path: /llms.txt
+    status: 404
+  - path: /openapi.json
+    status: 404
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /robots.txt
+    status: 404
+  - path: /sitemap.xml
+    status: 200
 - host: https://my.parsleyhealth.com
   note: >-
-    SPA catch-all. Content-Type text/html on every path; all 200s below are the app shell
-    and were REJECTED as false positives per the A2A/OpenAPI probe discipline.
+    SPA catch-all. Content-Type text/html on every path; all 200s are the app shell and
+    were REJECTED as false positives per the A2A/OpenAPI probe discipline. Re-confirmed
+    2026-08-15, including POST /graphql which also returns the HTML shell.
   documents:
   - path: /.well-known/agent-card.json
     status: 200
@@ -62,6 +158,11 @@ hosts:
     content_type: text/html
     accepted: false
     reason: html-spa-shell-no-graphql-endpoint
+  - path: /api/graphql
+    status: 200
+    content_type: text/html
+    accepted: false
+    reason: html-spa-shell
 - host: https://app.parsleyhealth.com
   note: SPA catch-all, same behaviour as my.parsleyhealth.com.
   documents:
@@ -75,15 +176,37 @@ hosts:
     content_type: text/html
     accepted: false
     reason: html-spa-shell-does-not-parse-as-openapi
+dangling_hosts:
+- host: api.parsleyhealth.com
+  record: 'CNAME -> elb-parsley-17779.aptible.in'
+  target: NXDOMAIN
+  reachable: false
+  note: >-
+    Recorded as "does not resolve" on 2026-08-02. It DOES have a published CNAME; the
+    Aptible load balancer it names no longer exists, so nothing answers. No HTTP probe is
+    possible.
+- host: docs.parsleyhealth.com
+  record: 'CNAME -> d3sqky83ufbfgj.cloudfront.net'
+  target: NOERROR, no address records
+  reachable: false
+  note: CloudFront distribution no longer serves addresses; no HTTP probe is possible.
 hosts_not_resolving:
-- api.parsleyhealth.com
 - developer.parsleyhealth.com
 - developers.parsleyhealth.com
-- docs.parsleyhealth.com
 - status.parsleyhealth.com
 - trust.parsleyhealth.com
+- mcp.parsleyhealth.com
+- graphql.parsleyhealth.com
+- gateway.parsleyhealth.com
+- blog.parsleyhealth.com
+- shop.parsleyhealth.com
+- careers.parsleyhealth.com
 summary:
-  documents_found: 0
+  documents_found: 5
+  well_known_documents_found: 3
   agent_card_found: false
+  security_txt_found: false
   openapi_found: false
-  llms_txt_found: false
+  llms_txt_found: true
+  mcp_endpoint_found: true
+  graphql_endpoint_found: true

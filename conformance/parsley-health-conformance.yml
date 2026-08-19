@@ -1,12 +1,19 @@
-generated: '2026-08-02'
+generated: '2026-08-15'
 method: searched
 source: >-
   https://www.parsleyhealth.com/notice-of-privacy-practices,
   https://www.parsleyhealth.com/telehealth-informed-consent,
-  https://www.parsleyhealth.com/privacy
+  https://www.parsleyhealth.com/privacy, plus 2026-08-15 live probes of
+  store.parsleyhealth.com (/.well-known/openid-configuration,
+  /.well-known/oauth-authorization-server, /.well-known/ucp, /llms.txt) and
+  https://store.parsleyhealth.com/api/ucp/mcp
 note: >-
-  Parsley Health has no public API and no OpenAPI, so there is nothing to derive
-  API-level conformance from. What IS published and verifiable is a healthcare regulatory
+  UPDATED 2026-08-15. Parsley Health still publishes no OpenAPI, but it is no longer true
+  that there is nothing to assess: its Shopify-hosted supplement store serves a live
+  UCP/MCP endpoint, an anonymous GraphQL endpoint, an llms.txt and OAuth/OIDC discovery
+  documents under parsleyhealth.com. Those standards now assert true below, each with the
+  platform-provided caveat recorded in its evidence. The healthcare regulatory posture is
+  unchanged. What IS published and verifiable is a healthcare regulatory
   posture: Parsley Medical publishes a HIPAA Notice of Privacy Practices declaring itself
   an Affiliated Covered Entity, plus telehealth informed consent and electronic
   communications consent documents. Those are recorded below. No SOC 2, ISO 27001,
@@ -56,14 +63,68 @@ standards:
     surface published. Parsley operates as a direct-pay/in-network clinical practice, not
     a payer or certified EHR developer.
 - id: oauth2
-  conforms: false
-  evidence: No public OAuth 2.0 authorization server; /.well-known/oauth-authorization-server 404.
+  conforms: true
+  evidence: >-
+    RFC 8414 authorization-server metadata is served at
+    https://store.parsleyhealth.com/.well-known/oauth-authorization-server (HTTP 200,
+    2026-08-15): authorization_code + refresh_token + jwt-bearer grants, PKCE S256,
+    client_secret_basic. The issuer is Shopify's per-shop authorization server for shop
+    24996151350 — inherited from the commerce platform, not operated by Parsley Health,
+    and it covers store customer accounts only.
+  url: https://store.parsleyhealth.com/.well-known/oauth-authorization-server
 - id: openid-connect
-  conforms: false
-  evidence: /.well-known/openid-configuration returns 404 on every host.
+  conforms: true
+  evidence: >-
+    OIDC discovery served at https://store.parsleyhealth.com/.well-known/openid-configuration
+    (HTTP 200, 2026-08-15) with RS256 id_token signing, a jwks_uri and the standard claim
+    set. Same Shopify-delegated issuer caveat as oauth2.
+  url: https://store.parsleyhealth.com/.well-known/openid-configuration
 - id: rfc9116-security-txt
   conforms: false
   evidence: /.well-known/security.txt returns 404 on every host.
 - id: rfc9457-problem-details
   conforms: false
-  evidence: No public API to evaluate.
+  evidence: >-
+    The one live machine surface returns JSON-RPC 2.0 error objects with HTTP 422, not
+    application/problem+json. See errors/parsley-health-problem-types.yml.
+- id: mcp
+  name: Model Context Protocol
+  conforms: true
+  evidence: >-
+    Live MCP server at https://store.parsleyhealth.com/api/ucp/mcp answers initialize and
+    tools/list anonymously; protocolVersion 2024-11-05, serverInfo universal-commerce
+    0.1.0, 13 tools with JSON Schema inputSchema. Platform-provided by Shopify.
+  url: https://store.parsleyhealth.com/api/ucp/mcp
+- id: ucp
+  name: Universal Commerce Protocol
+  conforms: true
+  evidence: >-
+    UCP merchant profile at https://store.parsleyhealth.com/.well-known/ucp advertises
+    versions 2026-04-08 (current) and 2026-01-23, the dev.ucp.shopping service over MCP
+    transport, and the checkout/cart/fulfillment/discount/order/catalog capability set.
+  url: https://store.parsleyhealth.com/.well-known/ucp
+- id: graphql
+  name: GraphQL
+  conforms: true
+  evidence: >-
+    Shopify Storefront GraphQL at https://store.parsleyhealth.com/api/2026-01/graphql.json
+    answers anonymous introspection (424 types) and anonymous data queries. Vendor-generic
+    schema; see graphql/parsley-health-storefront-graphql.yml.
+- id: json-schema
+  conforms: true
+  evidence: >-
+    All 13 MCP tool inputSchemas declare $schema https://json-schema.org/draft/2020-12/schema.
+- id: llmstxt
+  name: llms.txt
+  conforms: true
+  evidence: >-
+    https://store.parsleyhealth.com/llms.txt (HTTP 200, text/markdown) plus a companion
+    /agents.md and agent directives in /robots.txt. Not published on www.parsleyhealth.com.
+  url: https://store.parsleyhealth.com/llms.txt
+- id: a2a
+  name: A2A Agent Card
+  conforms: false
+  evidence: >-
+    /.well-known/agent-card.json and /.well-known/agent.json return 404 on
+    www.parsleyhealth.com, store.parsleyhealth.com and help.parsleyhealth.com; the 200s on
+    my./app.parsleyhealth.com are SPA HTML shells and were rejected. No agent card exists.

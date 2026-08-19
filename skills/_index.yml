@@ -1,0 +1,20 @@
+generated: '2026-08-15'
+method: generated
+source: >-
+  mcp/parsley-health-store-tools-list.json (13 live tools probed from
+  https://store.parsleyhealth.com/api/ucp/mcp on 2026-08-15) plus the store's published
+  agent rules at https://store.parsleyhealth.com/llms.txt
+note: >-
+  Parsley Health publishes no Agent Skills and no AGENTS.md of its own. These two skills
+  are written by API Evangelist and grounded entirely in tool names and field paths read
+  from the live MCP schema — no operation, field or endpoint is invented. Both cover the
+  supplement store only; the medical practice has no machine surface to write a skill for.
+skills:
+- name: parsley-health-store-catalog-search
+  file: parsley-health-store-catalog-search.md
+  description: Search and read the supplement catalog over UCP/MCP, with anonymous JSON and GraphQL fallbacks.
+  operations: [search_catalog, lookup_catalog, get_product]
+- name: parsley-health-store-cart-checkout
+  file: parsley-health-store-cart-checkout.md
+  description: Build a cart and drive a checkout, stopping at the mandatory human payment approval.
+  operations: [create_cart, update_cart, get_cart, cancel_cart, create_checkout, update_checkout, get_checkout, complete_checkout, cancel_checkout, get_order]

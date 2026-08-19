@@ -1,0 +1,93 @@
+generated: '2026-08-15'
+method: derived
+source: >-
+  mcp/parsley-health-store-tools-list.json, well-known/parsley-health-store-ucp.json,
+  https://store.parsleyhealth.com/llms.txt, https://store.parsleyhealth.com/robots.txt,
+  and live probes of the MCP and GraphQL endpoints (2026-08-15)
+note: >-
+  Cross-cutting runtime semantics for the only machine surface Parsley Health serves —
+  the UCP/MCP + GraphQL commerce endpoints on store.parsleyhealth.com. These conventions
+  are Shopify/UCP platform conventions inherited by the store, not house rules Parsley
+  Health authored, and they say nothing about the medical practice, which has no API.
+  IDEMPOTENCY IS NOT PUBLISHED: no idempotency key header, no replay window and no
+  retry-safety statement appears in the tool schemas, the UCP discovery document or the
+  store's agent documentation, so no Idempotency pointer is emitted for this provider.
+auth_style:
+  summary: Anonymous for reads; OAuth2/OIDC (Shopify-issued) for customer-account access.
+  detail: authentication/parsley-health-authentication.yml
+agent_identity:
+  required: true
+  field: meta.ucp-agent.profile
+  type: resolvable agent profile URI
+  description: >-
+    Every UCP/MCP tool call must carry a meta object with ucp-agent.profile. It is a
+    required property on all 13 tool inputSchemas.
+  failure: 'JSON-RPC error -32001 "UCP discovery failed", data.code invalid_profile_url'
+identifiers:
+  style: Shopify global IDs
+  format: 'gid://shopify/{Type}/{id}'
+  example: 'gid://shopify/Checkout/abc123'
+  note: Checkout, cart, order and product-variant identifiers are all gid:// URIs, not opaque integers.
+money:
+  representation: integer minor units + currency code
+  shape: '{"amount": 2500, "currency": "USD"}'
+  rule: >-
+    Amounts are ISO 4217 minor units. Divide by 100 for two-decimal currencies (USD, EUR)
+    before quoting a price to a buyer; zero-decimal currencies (JPY) are already whole
+    units. This instruction is repeated in every checkout/cart tool description.
+  currency_field: currency (ISO 4217 alpha-3)
+localization:
+  context_fields: [context.address_country, context.currency]
+  note: Agents are told to pass buyer context for accurate pricing and availability.
+pagination:
+  mcp: 'Cursor-based on catalog search — catalog.pagination.{cursor,limit} on search_catalog.'
+  graphql: Relay-style connections (edges/node, first/after) on the Storefront API.
+  storefront_json: '?page= and ?limit= on /products.json (platform default 30 per page)'
+versioning:
+  ucp:
+    current: '2026-04-08'
+    supported: ['2026-04-08', '2026-01-23']
+    discovery: https://store.parsleyhealth.com/.well-known/ucp
+    style: dated version strings, negotiated at discovery
+  graphql:
+    style: dated version in the path
+    current: '2026-01'
+    example: https://store.parsleyhealth.com/api/2026-01/graphql.json
+  mcp_protocol_version: '2024-11-05'
+error_envelope:
+  mcp: JSON-RPC 2.0 — {jsonrpc, id, error:{code, message, data:{code, content, continue_url}}}
+  graphql: GraphQL errors[] array; HTTP stays 200
+  catalog: errors/parsley-health-problem-types.yml
+  rfc9457: false
+rate_limits:
+  published_numbers: false
+  signal: 'HTTP 429 on the MCP endpoint; the store instructs agents to back off on 429.'
+  detail: rate-limits/parsley-health-rate-limits.yml
+idempotency:
+  supported: unknown
+  published: false
+  note: >-
+    No idempotency key, no dedupe window and no retry-safety guidance is published for
+    create_checkout, create_cart or complete_checkout. An agent retrying a failed
+    create_* call has no documented protection against duplication.
+expansion_and_sparse_fields:
+  mcp: Not supported — tools return fixed UCP shapes.
+  graphql: Native field selection.
+request_id_tracing:
+  published: false
+  note: No request-id or correlation header is documented or observed on responses.
+human_in_the_loop:
+  rule: >-
+    Checkout, payment and order placement must not be completed autonomously. Agents must
+    obtain explicit, contemporaneous human buyer approval before payment, or route the
+    purchase through the Shop Pay skill.
+  sources:
+  - https://store.parsleyhealth.com/llms.txt
+  - https://store.parsleyhealth.com/robots.txt
+cross_links:
+  authentication: authentication/parsley-health-authentication.yml
+  scopes: scopes/parsley-health-scopes.yml
+  errors: errors/parsley-health-problem-types.yml
+  lifecycle: lifecycle/parsley-health-lifecycle.yml
+  rate_limits: rate-limits/parsley-health-rate-limits.yml
+  data_model: data-model/parsley-health-data-model.yml

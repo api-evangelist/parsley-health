@@ -1,0 +1,68 @@
+generated: '2026-08-15'
+method: probed
+source: >-
+  https://store.parsleyhealth.com/.well-known/openid-configuration (HTTP 200),
+  https://store.parsleyhealth.com/.well-known/oauth-authorization-server (HTTP 200),
+  live anonymous probes of https://store.parsleyhealth.com/api/ucp/mcp and
+  https://store.parsleyhealth.com/api/2026-01/graphql.json (2026-08-15)
+note: >-
+  Parsley Health publishes no developer authentication documentation and issues no API
+  keys. The auth model recorded here is the one that is actually observable on its public
+  hosts: an OAuth 2.0 / OpenID Connect authorization server delegated to Shopify for the
+  supplement store's customer accounts, plus two surfaces that need no credential at all.
+  The medical practice's member application (my.parsleyhealth.com) is a separate,
+  authenticated single-page app with no documented or discoverable auth contract — its
+  login is a human flow, not an API.
+schemes:
+- id: none-anonymous
+  type: none
+  applies_to:
+  - https://store.parsleyhealth.com/api/ucp/mcp (tools/list, initialize)
+  - https://store.parsleyhealth.com/api/2026-01/graphql.json (introspection + public storefront reads)
+  - https://store.parsleyhealth.com/products.json and the other storefront JSON endpoints
+  evidence: All returned HTTP 200 with no Authorization header on 2026-08-15.
+- id: ucp-agent-profile
+  type: agent-identity
+  applies_to: [https://store.parsleyhealth.com/api/ucp/mcp]
+  description: >-
+    Not authentication in the credential sense — every UCP tool call must carry
+    meta.ucp-agent.profile, a resolvable agent profile URI identifying the calling agent.
+    Omitting it returns JSON-RPC error -32001 "UCP discovery failed" with
+    data.code invalid_profile_url.
+  evidence: Observed on resources/list and prompts/list probes, 2026-08-15.
+- id: oauth2-oidc-shopify
+  type: openIdConnect
+  applies_to: [Parsley Health store customer accounts]
+  issuer: https://shopify.com/authentication/24996151350
+  authorization_endpoint: https://shopify.com/authentication/24996151350/oauth/authorize
+  token_endpoint: https://shopify.com/authentication/24996151350/oauth/token
+  end_session_endpoint: https://shopify.com/authentication/24996151350/logout
+  jwks_uri: https://shopify.com/authentication/24996151350/.well-known/jwks.json
+  discovery:
+  - https://store.parsleyhealth.com/.well-known/openid-configuration
+  - https://store.parsleyhealth.com/.well-known/oauth-authorization-server
+  grant_types: [authorization_code, refresh_token, 'urn:ietf:params:oauth:grant-type:jwt-bearer']
+  response_types: [code]
+  pkce: [S256]
+  token_endpoint_auth_methods: [client_secret_basic]
+  id_token_signing_alg: [RS256]
+  scopes: [openid, email, 'customer-account-api:full', 'customer-account-mcp-api:full']
+  scopes_artifact: scopes/parsley-health-scopes.yml
+  note: >-
+    The discovery documents are served from Parsley Health's hostname but the issuer is
+    Shopify's per-shop authorization server for shop 24996151350. Parsley Health does not
+    operate this authorization server; it is inherited from the commerce platform.
+- id: member-app-login
+  type: opaque
+  applies_to: [https://my.parsleyhealth.com, https://app.parsleyhealth.com]
+  description: >-
+    Authenticated member application for clinical care. Single-page app behind a
+    catch-all that returns HTTP 200 text/html for every path, including
+    /.well-known/* and /openapi.json. No auth metadata, no token endpoint, no
+    machine-readable contract is discoverable.
+  evidence: Probed 2026-08-15 and 2026-08-02; all responses are the app shell.
+api_keys:
+  published: false
+  note: No developer program, no API key issuance, no key-prefix convention published.
+mtls:
+  published: false

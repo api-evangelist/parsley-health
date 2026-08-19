@@ -1,8 +1,9 @@
-generated: '2026-08-02'
+generated: '2026-08-15'
 method: searched
 source: >-
   npm registry search (registry.npmjs.org), PyPI, RubyGems, Packagist, plus the
-  github.com/parsleyhealth public repository listing
+  github.com/parsleyhealth public repository listing; versions and publish dates re-read
+  from registry.npmjs.org on 2026-08-15
 note: >-
   Parsley Health publishes NO client SDK for any API — it has no public API. The npm
   packages below are genuinely first-party (published under the @parsleyhealth scope or
@@ -11,7 +12,13 @@ note: >-
   `SDKs` pointer in apis.yml, because none of them is an API client library and the
   sdk_count scoring check must not be satisfied by lint configs. PyPI, RubyGems,
   Packagist, crates.io, NuGet, Maven Central and pkg.go.dev returned no first-party
-  Parsley Health packages.
+  Parsley Health packages. CURRENCY (re-read 2026-08-15): all three npm packages are
+  abandoned — the newest was last published 2020-06-29 and the other two in 2019 and 2018.
+  Nothing has shipped in six years. This is not an SDK decay signal, because none of them
+  ever wrapped an API; it is confirmation that the public npm footprint is dormant
+  engineering tooling. The one machine surface this company actually serves — the UCP/MCP
+  commerce endpoint at store.parsleyhealth.com — has no client library at all and needs
+  none; it is called over plain JSON-RPC.
 packages:
 - language: javascript
   registry: npm
@@ -21,6 +28,10 @@ packages:
   official: true
   kind: developer-tooling
   is_api_client: false
+  version: 1.1.0
+  published: '2019-01-02'
+  first_published: '2018-12-17'
+  release_count: 3
   description: Shared TSLint configuration for Parsley Health
 - language: javascript
   registry: npm
@@ -30,6 +41,10 @@ packages:
   official: true
   kind: developer-tooling
   is_api_client: false
+  version: 1.0.0
+  published: '2020-06-29'
+  first_published: '2020-06-29'
+  release_count: 1
   description: Parsley Health Cephalopod eslint configuration
 - language: javascript
   registry: npm
@@ -39,6 +54,10 @@ packages:
   official: true
   kind: developer-tooling
   is_api_client: false
+  version: 1.3.0
+  published: '2018-08-29'
+  first_published: '2017-05-09'
+  release_count: 14
   description: eslint shareable config for Parsley Health
 registries_probed:
 - registry: npm
@@ -60,6 +79,8 @@ registries_probed:
 source_repositories:
   org: https://github.com/parsleyhealth
   public_repos: 12
+  rechecked: '2026-08-15'
+  most_recent_push: '2026-06-22 (github-composite-actions)'
   contact: engineering@parsleyhealth.com
   note: >-
     All 12 public repositories are internal engineering infrastructure — a standard

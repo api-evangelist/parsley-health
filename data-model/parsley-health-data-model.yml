@@ -1,0 +1,130 @@
+generated: '2026-08-15'
+method: derived
+source: >-
+  mcp/parsley-health-store-tools-list.json — the inputSchema of all 13 live UCP/MCP tools
+  fetched from https://store.parsleyhealth.com/api/ucp/mcp on 2026-08-15
+note: >-
+  There is no OpenAPI to derive from, so this entity graph is derived from the JSON
+  Schemas the live MCP tools declare. It models the commerce domain of the Parsley Health
+  supplement store ONLY — Product, Cart, Checkout, Order and their supporting value
+  objects. No clinical entity (patient, visit, lab result, care plan, clinician) appears
+  anywhere on a machine surface this company serves, and none is invented here.
+  Identifiers throughout are Shopify global IDs of the form gid://shopify/{Type}/{id};
+  money is an {amount, currency} pair in ISO 4217 minor units.
+id_convention:
+  format: 'gid://shopify/{Type}/{id}'
+  examples: ['gid://shopify/Checkout/abc123']
+money_convention:
+  shape: '{amount: <integer minor units>, currency: <ISO 4217>}'
+entities:
+- name: Checkout
+  id_field: id
+  description: A purchase in progress — line items, buyer, fulfillment, discounts, payment instruments and totals.
+  fields: [id, cart_id, buyer, line_items, fulfillment, discounts, payment, context, attribution]
+  tools: [create_checkout, get_checkout, update_checkout, complete_checkout, cancel_checkout]
+- name: Cart
+  id_field: id
+  description: A pre-checkout collection of line items with the same buyer/fulfillment/discount structure as Checkout.
+  fields: [id, buyer, line_items, fulfillment, discounts, context, attribution]
+  tools: [create_cart, get_cart, update_cart, cancel_cart]
+- name: Order
+  id_field: id
+  description: A completed purchase, readable by identifier.
+  fields: [id]
+  tools: [get_order]
+- name: Product
+  id_field: catalog.id
+  description: A store product, retrievable in full or via catalog search and bulk lookup.
+  fields: [id, selected, preferences]
+  tools: [get_product, search_catalog, lookup_catalog]
+- name: LineItem
+  id_field: id
+  description: A quantity of one product variant inside a Cart or Checkout.
+  fields: [id, quantity, item.id]
+- name: Buyer
+  description: Contact identity attached to a Cart or Checkout.
+  fields: [email, phone_number]
+- name: PaymentInstrument
+  id_field: id
+  description: A card, token or wallet instrument attached to a Checkout, produced by a declared payment handler.
+  fields: [id, handler_id, type, billing_address, credential, display, selected]
+- name: Address
+  description: Billing or shipping address value object.
+  fields: [street_address, extended_address, address_locality, address_region, postal_code, address_country, first_name, last_name, phone_number]
+- name: FulfillmentMethod
+  description: How line items are delivered — type, destinations, groups and the selected destination.
+  fields: [type, destinations, groups, line_item_ids, selected_destination_id]
+- name: Discount
+  description: Discount codes applied to a Cart or Checkout.
+  fields: [codes]
+- name: BuyerContext
+  description: Provisional localization/eligibility hints that drive pricing and availability.
+  fields: [address_country, address_region, postal_code, currency, language, intent, eligibility]
+- name: Attribution
+  description: Marketing attribution carried through cart and checkout.
+  fields: [utm_source, utm_medium, utm_campaign, utm_term, utm_content, referring_domain, click_id_tag, click_id_value, activity_id_tag, activity_id_value]
+- name: AgentProfile
+  description: The calling agent's identity, required on every tool call as meta.ucp-agent.profile.
+  fields: [profile]
+relationships:
+- from: Checkout
+  to: Cart
+  type: belongs_to
+  via: cart_id
+- from: Checkout
+  to: LineItem
+  type: has_many
+  via: line_items
+- from: Cart
+  to: LineItem
+  type: has_many
+  via: line_items
+- from: LineItem
+  to: Product
+  type: belongs_to
+  via: item.id
+- from: Checkout
+  to: Buyer
+  type: has_one
+  via: buyer
+- from: Cart
+  to: Buyer
+  type: has_one
+  via: buyer
+- from: Checkout
+  to: PaymentInstrument
+  type: has_many
+  via: payment.instruments
+- from: PaymentInstrument
+  to: Address
+  type: has_one
+  via: billing_address
+- from: Checkout
+  to: FulfillmentMethod
+  type: has_many
+  via: fulfillment.methods
+- from: Cart
+  to: FulfillmentMethod
+  type: has_many
+  via: fulfillment.methods
+- from: Checkout
+  to: Discount
+  type: has_one
+  via: discounts
+- from: Checkout
+  to: BuyerContext
+  type: has_one
+  via: context
+- from: Checkout
+  to: Attribution
+  type: has_one
+  via: attribution
+- from: Order
+  to: Checkout
+  type: belongs_to
+  via: 'completion of a Checkout (implied by complete_checkout; no explicit field exposed)'
+absent_domains:
+- domain: clinical
+  note: No patient, encounter, visit, lab-result, prescription, care-plan or clinician entity is exposed on any public machine surface.
+- domain: membership
+  note: Membership plans are sold through human web flows only; no plan or subscription entity is machine-readable.

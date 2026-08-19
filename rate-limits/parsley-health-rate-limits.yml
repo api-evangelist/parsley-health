@@ -1,0 +1,41 @@
+generated: '2026-08-15'
+method: searched
+source: >-
+  https://store.parsleyhealth.com/llms.txt and https://store.parsleyhealth.com/robots.txt
+  (both HTTP 200, 2026-08-15), plus live response-header inspection of
+  https://store.parsleyhealth.com/api/ucp/mcp
+note: >-
+  Parsley Health publishes no numeric rate limits. The only published limit statement on
+  any of its hosts is the store's instruction to agents that the UCP/MCP endpoint is
+  rate-limited per IP and that they must back off on HTTP 429. No X-RateLimit-*,
+  RateLimit-* or Retry-After header was returned on any successful anonymous request
+  observed on 2026-08-15, so an agent gets no runtime budget signal until it is already
+  being throttled. The GraphQL endpoint does echo a calculated query cost in the response
+  envelope, which is the closest thing to a runtime signal on this provider.
+limit_count: 0
+limits: []
+published_signals:
+- surface: https://store.parsleyhealth.com/api/ucp/mcp
+  scope: per-ip
+  window: undocumented
+  limit: undocumented
+  burst: undocumented
+  exhaustion_status: 429
+  response_headers_observed: []
+  guidance: 'Respect rate limits. The MCP endpoint is rate-limited per IP. Back off on 429 responses.'
+  source: https://store.parsleyhealth.com/llms.txt
+- surface: https://store.parsleyhealth.com/api/2026-01/graphql.json
+  scope: per-query-cost
+  window: undocumented
+  limit: undocumented
+  exhaustion_status: undocumented
+  response_headers_observed: []
+  runtime_signal: extensions.cost.requestedQueryCost returned in the response body on every query
+  source: probed 2026-08-15
+- surface: https://www.parsleyhealth.com
+  scope: n/a
+  note: Marketing site; no API, no published limits.
+gaps:
+- No numeric quota is published for any surface.
+- No RateLimit-* / X-RateLimit-* / Retry-After headers observed on 200 responses.
+- No documented limits exist for the medical practice, which has no public API.

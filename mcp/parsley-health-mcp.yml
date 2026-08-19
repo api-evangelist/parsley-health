@@ -1,0 +1,121 @@
+generated: '2026-08-15'
+method: probed
+source: >-
+  https://store.parsleyhealth.com/api/ucp/mcp (live anonymous JSON-RPC tools/list,
+  HTTP 200, 2026-08-15), discovered via https://store.parsleyhealth.com/llms.txt and
+  https://store.parsleyhealth.com/robots.txt, confirmed against
+  https://store.parsleyhealth.com/.well-known/ucp
+name: Parsley Health Store — UCP / MCP commerce endpoint
+note: >-
+  Parsley Health serves a LIVE, anonymous, callable MCP server on its own domain at
+  https://store.parsleyhealth.com/api/ucp/mcp. It is the Universal Commerce Protocol
+  (UCP) shopping service for the Parsley Health supplement store. PROVENANCE MATTERS
+  HERE: this endpoint is PLATFORM-PROVIDED, not engineered by Parsley Health. The store
+  runs on Shopify (shop id 24996151350, parsley-health.myshopify.com) and Shopify serves
+  UCP/MCP natively for every store on the platform; serverInfo reports
+  "universal-commerce" 0.1.0, not a Parsley-authored server. Parsley Health's decision to
+  run the store on a platform that ships this surface, under its own hostname, is what
+  makes it reachable — but the tools, schemas and semantics below are Shopify's, and are
+  identical across Shopify merchants. This endpoint covers the SUPPLEMENT STORE ONLY. It
+  exposes NO clinical, member, appointment, lab-result or medical-record data, and there
+  is still no public API for the Parsley Health medical practice.
+ownership_check: >-
+  Confirmed this company's surface, not a sibling's: the UCP discovery document names
+  merchant_name "Parsley Health" and merchant_origin "store.parsleyhealth.com"; the
+  anonymous Storefront GraphQL query returns shop.name "Parsley Health" and
+  primaryDomain "https://store.parsleyhealth.com".
+deployment:
+  mode: remote
+  endpoint: https://store.parsleyhealth.com/api/ucp/mcp
+  auth: none
+  verified: probed
+  note: >-
+    Anonymous tools/list and initialize both return HTTP 200 with no credential. There is
+    no npm/pypi package and no stdio install path — this is a hosted endpoint only. The
+    UCP discovery document additionally advertises the same service at the platform
+    hostname https://parsley-health.myshopify.com/api/ucp/mcp; both resolve to the same
+    shop. Checkout completion requires contemporaneous human buyer approval per the
+    store's published agent rules (robots.txt and llms.txt), and payment credentials are
+    handled by the declared payment handlers, not by the MCP tools.
+status: live
+protocol:
+  mcp_protocol_version: '2024-11-05'
+  server_info:
+    name: universal-commerce
+    version: 0.1.0
+  capabilities:
+    tools: {listChanged: true}
+    prompts: {listChanged: true}
+    resources: {listChanged: true}
+    logging: {}
+  ucp_version: '2026-04-08'
+  ucp_supported_versions: ['2026-04-08', '2026-01-23']
+  ucp_discovery: https://store.parsleyhealth.com/.well-known/ucp
+  transport: streamable-http (JSON-RPC over POST; Accept application/json, text/event-stream)
+tools_source: mcp/parsley-health-store-tools-list.json
+tool_count: 13
+tools:
+- name: get_checkout
+  category: checkout
+  description: Returns details about the checkout, including line items, totals, and any applicable discounts or taxes.
+  required: [meta, id]
+- name: create_checkout
+  category: checkout
+  description: Creates a checkout and returns checkout details, line items, totals, discounts and taxes.
+  required: [meta, checkout]
+- name: update_checkout
+  category: checkout
+  description: Updates a checkout (buyer, shipping address, fulfillment method, payment instrument).
+  required: [meta, checkout, id]
+- name: complete_checkout
+  category: checkout
+  description: Completes a checkout and returns the completed checkout result. Requires explicit buyer approval of payment.
+  required: [meta, id, checkout]
+- name: cancel_checkout
+  category: checkout
+  description: Cancels a checkout.
+  required: [meta, id]
+- name: get_cart
+  category: cart
+  description: Get the cart contents.
+  required: [meta, id]
+- name: create_cart
+  category: cart
+  description: Creates a new cart.
+  required: [meta, cart]
+- name: update_cart
+  category: cart
+  description: Perform updates to a cart.
+  required: [meta, cart, id]
+- name: cancel_cart
+  category: cart
+  description: Cancels a cart.
+  required: [meta, id]
+- name: get_order
+  category: order
+  description: Get the details of an order.
+  required: [meta, id]
+- name: search_catalog
+  category: catalog
+  description: Search for products from the online store, hosted on Shopify.
+  required: [meta, catalog]
+- name: lookup_catalog
+  category: catalog
+  description: Look up multiple products or variants by identifier.
+  required: [meta, catalog]
+- name: get_product
+  category: catalog
+  description: Retrieve complete product detail by identifier. Returns a singular product.
+  required: [meta, catalog]
+agent_rules_published:
+- rule: Checkout requires contemporaneous human approval; agents must not finalize payment autonomously.
+  source: https://store.parsleyhealth.com/llms.txt
+- rule: The MCP endpoint is rate-limited per IP; back off on HTTP 429.
+  source: https://store.parsleyhealth.com/llms.txt
+- rule: Every tool call requires meta.ucp-agent.profile — a resolvable agent profile URI. Calls without it fail with JSON-RPC -32001 invalid_profile_url.
+  source: probed 2026-08-15
+related_surfaces:
+  llms_txt: https://store.parsleyhealth.com/llms.txt
+  agents_md: https://store.parsleyhealth.com/agents.md
+  graphql: https://store.parsleyhealth.com/api/2026-01/graphql.json
+  storefront_json: https://store.parsleyhealth.com/products.json

@@ -1,0 +1,39 @@
+generated: '2026-08-15'
+method: probed
+source: >-
+  https://store.parsleyhealth.com/api/2026-01/graphql.json (anonymous introspection and
+  anonymous data query, both HTTP 200, 2026-08-15)
+name: Parsley Health Store — Shopify Storefront GraphQL API
+note: >-
+  A live GraphQL endpoint answers anonymously on Parsley Health's own hostname. It is the
+  Shopify Storefront API, served for the Parsley Health supplement store — PLATFORM-
+  PROVIDED, not authored by Parsley Health, and schema-identical across every Shopify
+  merchant. For that reason no SDL is checked in under this company: publishing 424
+  vendor-generic types as "Parsley Health's schema" would misattribute Shopify's contract
+  to this company. What IS recorded here is the fact that the endpoint exists, is
+  reachable without a credential, and which shop it belongs to. The introspected type
+  list is saved as evidence in
+  graphql/parsley-health-storefront-introspection-types.json.
+ownership_check: >-
+  The anonymous query `{shop{name primaryDomain{url}}}` returns name "Parsley Health" and
+  primaryDomain "https://store.parsleyhealth.com" — this is this company's shop.
+endpoint: https://store.parsleyhealth.com/api/2026-01/graphql.json
+api_version: '2026-01'
+introspection:
+  enabled: true
+  authenticated: false
+  type_count: 424
+  query_type: QueryRoot
+  evidence: graphql/parsley-health-storefront-introspection-types.json
+data_access:
+  anonymous_read: true
+  example_query: '{shop{name primaryDomain{url}} products(first:2){edges{node{title handle}}}}'
+  scope: >-
+    Public storefront data only — products, variants, collections, articles, cart. No
+    clinical, member or medical-record data is reachable from this endpoint.
+cost_signal:
+  header: extensions.cost.requestedQueryCost returned on every response
+  note: Shopify's calculated query cost is echoed in the response envelope; no published numeric budget on this store.
+schema_owner:
+  vendor: Shopify
+  docs: https://shopify.dev/docs/api/storefront

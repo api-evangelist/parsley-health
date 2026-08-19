@@ -1,0 +1,88 @@
+generated: '2026-08-15'
+method: derived
+source: >-
+  mcp/parsley-health-store-tools-list.json (13 live MCP tools with inputSchema),
+  graphql/parsley-health-storefront-graphql.yml (anonymous Shopify Storefront GraphQL),
+  and the storefront JSON endpoints published in https://store.parsleyhealth.com/llms.txt
+note: >-
+  Parsley Health publishes NO OpenAPI, so there are no operationIds to bind to. This
+  crosswalk therefore binds each live MCP tool to the OTHER two machine surfaces the
+  store actually serves — the anonymous Storefront GraphQL endpoint and the unauthenticated
+  storefront JSON endpoints documented in the store's own llms.txt. Bindings are by
+  semantics and confirmed surface, never by invention; confidence is set honestly and
+  every `rest` entry below is a PATH (there is no operationId to name). The cart and
+  checkout half of the tool set has NO anonymous read-only equivalent, which is the point
+  of recording this: an agent can browse this store three ways but can only transact one
+  way.
+surfaces:
+  openapi:
+    present: false
+    note: No OpenAPI or Swagger is published on any Parsley Health host; probed 2026-08-15.
+  graphql:
+    endpoint: https://store.parsleyhealth.com/api/2026-01/graphql.json
+    gated: false
+    note: Anonymous introspection and anonymous data queries both succeed.
+  mcp:
+    endpoint: https://store.parsleyhealth.com/api/ucp/mcp
+    gated: false
+    note: >-
+      tools/list is anonymous. Individual tool CALLS require meta.ucp-agent.profile (a
+      resolvable agent profile URI) and checkout completion requires human buyer approval.
+  storefront_json:
+    base: https://store.parsleyhealth.com
+    gated: false
+    note: Documented by the provider in llms.txt — /products.json, /products/{handle}.json, /collections/{handle}/products.json, /cart.js, /search.
+coverage:
+  mcp_tools: 13
+  bound_to_another_surface: 3
+  mcp_only: 10
+  rest_only: 3
+crosswalk:
+- tool: search_catalog
+  category: catalog
+  rest: ['GET /search?q={query}&type=product', 'GET /products.json']
+  graphql: 'Query.products(first,query)'
+  binding: semantic
+  confidence: high
+  note: Product search is reachable anonymously on all three surfaces; only the MCP tool returns UCP-shaped money objects (ISO 4217 minor units).
+- tool: get_product
+  category: catalog
+  rest: ['GET /products/{handle}.json']
+  graphql: 'Query.product(handle)'
+  binding: semantic
+  confidence: high
+- tool: lookup_catalog
+  category: catalog
+  rest: ['GET /collections/{handle}/products.json']
+  graphql: 'Query.nodes(ids)'
+  binding: semantic
+  confidence: medium
+  note: Bulk lookup by identifier; the JSON endpoints only approximate this by collection, so the mapping is partial.
+mcp_only:
+- tool: create_cart
+  reason: Cart mutation. /cart.js is read-only for an unauthenticated agent; the GraphQL cartCreate mutation exists but is not part of the published agent path.
+- tool: get_cart
+  reason: Reads a UCP cart by gid; /cart.js reads only the browser-session cart, which an agent does not have.
+- tool: update_cart
+  reason: Cart mutation with no anonymous JSON equivalent.
+- tool: cancel_cart
+  reason: Cart mutation with no anonymous JSON equivalent.
+- tool: create_checkout
+  reason: Checkout creation is exposed only through UCP/MCP or the hosted human checkout.
+- tool: get_checkout
+  reason: Checkout read by gid; no public JSON or documented GraphQL equivalent for agents.
+- tool: update_checkout
+  reason: Sets buyer, shipping address, fulfillment method and payment instrument — UCP-only.
+- tool: complete_checkout
+  reason: Finalizes payment. Deliberately agent-restricted — requires contemporaneous human buyer approval per the store's published rules.
+- tool: cancel_checkout
+  reason: UCP-only checkout mutation.
+- tool: get_order
+  reason: Order read. The equivalent GraphQL/customer-account path requires an authenticated customer token (scope customer-account-api:full).
+rest_only:
+- path: 'GET /cart.js'
+  reason: Browser-session cart JSON; no MCP tool reads it because an agent has no browser session.
+- path: 'GET /sitemap.xml'
+  reason: Crawl surface, not modelled as a tool.
+- path: 'GET /policies/{policy}'
+  reason: Store policies (privacy, terms, refund, shipping) are HTML pages with no tool binding.

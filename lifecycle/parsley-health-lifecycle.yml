@@ -1,0 +1,67 @@
+generated: '2026-08-15'
+method: probed
+source: >-
+  well-known/parsley-health-store-ucp.json, mcp/parsley-health-store-tools-list.json,
+  https://store.parsleyhealth.com/api/2026-01/graphql.json, and DNS/HTTP probes of the
+  parsleyhealth.com hosts (2026-08-15)
+note: >-
+  Parsley Health publishes no API versioning policy, no deprecation policy, no Sunset or
+  Deprecation header guidance, no SLA and no status page. The version discipline recorded
+  below is inherited from the commerce platform, which negotiates dated versions at
+  discovery — it is not a commitment Parsley Health has made to anyone. No StatusPage or
+  Deprecation pointer is emitted in apis.yml, because neither exists.
+versioning:
+  policy_published: false
+  schemes:
+  - surface: UCP / MCP commerce endpoint
+    style: dated version negotiated at discovery
+    current: '2026-04-08'
+    supported: ['2026-04-08', '2026-01-23']
+    discovery: https://store.parsleyhealth.com/.well-known/ucp
+  - surface: Storefront GraphQL
+    style: dated version in the URL path
+    current: '2026-01'
+    example: https://store.parsleyhealth.com/api/2026-01/graphql.json
+  - surface: MCP protocol
+    style: protocol version string returned by initialize
+    current: '2024-11-05'
+deprecation:
+  policy_published: false
+  sunset_header: not observed
+  deprecation_header: not observed
+  rfc8594: false
+  note: >-
+    The UCP discovery document lists an older supported version (2026-01-23) alongside
+    the current one, which is a de-facto overlap window, but no retirement date is stated
+    anywhere.
+status_page:
+  published: false
+  probed:
+  - url: https://status.parsleyhealth.com
+    result: NXDOMAIN
+  note: No status page exists on a Parsley Health host and none is linked from any published page.
+sla:
+  published: false
+support:
+  help_center: https://help.parsleyhealth.com
+  contact: https://www.parsleyhealth.com/contact
+host_lifecycle_findings:
+- host: api.parsleyhealth.com
+  record: 'CNAME -> elb-parsley-17779.aptible.in'
+  target_status: NXDOMAIN
+  finding: >-
+    A published CNAME points at an Aptible load balancer that no longer resolves. The
+    hostname is advertised in DNS but nothing serves it — a retired API host whose DNS
+    record was never withdrawn.
+  probed: '2026-08-15'
+- host: docs.parsleyhealth.com
+  record: 'CNAME -> d3sqky83ufbfgj.cloudfront.net'
+  target_status: NOERROR with no address records
+  finding: >-
+    A published CNAME points at a CloudFront distribution that returns no addresses. A
+    documentation host was provisioned at some point and is no longer served.
+  probed: '2026-08-15'
+- note: >-
+    Both records were recorded as "does not resolve in DNS" in the 2026-08-02 pass. They
+    do resolve — as dangling CNAMEs to deprovisioned infrastructure. This is a lifecycle
+    fact (retired hosts) and is also recorded in security/parsley-health-domain-security.yml.

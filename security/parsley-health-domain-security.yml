@@ -1,12 +1,40 @@
-generated: '2026-08-02'
+generated: '2026-08-15'
 method: probed
-source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+source: live DNS/TLS/HTTP probes of every Parsley Health host (2026-08-15; supersedes 2026-08-02)
+note: >-
+  Re-probed and extended. Two findings changed since the 2026-08-02 pass. First, two hosts
+  previously recorded as "does not resolve" actually publish DANGLING CNAME records
+  pointing at deprovisioned infrastructure — api.parsleyhealth.com at a dead Aptible load
+  balancer and docs.parsleyhealth.com at a CloudFront distribution with no addresses. Both
+  are advertised in DNS with nothing behind them. Second, two hosts the earlier pass never
+  saw were added: store.parsleyhealth.com (Shopify) and help.parsleyhealth.com (Help
+  Scout), and both, unlike the marketing site, do send HSTS. The apex marketing site still
+  sends no HSTS header and the zone is still unsigned.
 hosts:
 - host: www.parsleyhealth.com
   https: true
   tls_version: TLSv1.3
+  cert_issuer: Google Trust Services (WR3)
   cert_expires: Oct  3 22:23:12 2026 GMT
   hsts: false
+- host: store.parsleyhealth.com
+  https: true
+  tls_version: TLSv1.3
+  cert_issuer: Let's Encrypt (YE1)
+  cert_expires: Oct 28 23:26:32 2026 GMT
+  hsts: true
+  hsts_header: max-age=7889238
+  note: >-
+    Shopify-hosted storefront. Carries the only live machine surfaces on this company —
+    the UCP/MCP endpoint and the Storefront GraphQL endpoint.
+- host: help.parsleyhealth.com
+  https: true
+  tls_version: TLSv1.3
+  cert_issuer: Let's Encrypt (YE2)
+  cert_expires: Oct  1 16:44:48 2026 GMT
+  hsts: true
+  hsts_header: max-age=31536000; includeSubDomains; preload
+  note: Help Scout Docs help centre.
 - host: my.parsleyhealth.com
   https: true
   tls_version: TLSv1.3
@@ -19,6 +47,22 @@ hosts:
   cert_expires: Sep 18 21:14:35 2026 GMT
   hsts: false
   note: authenticated member application (Google Frontend); no HSTS response header observed
+dangling_cnames:
+- host: api.parsleyhealth.com
+  cname: elb-parsley-17779.aptible.in
+  target_dns_status: NXDOMAIN
+  severity_note: >-
+    A CNAME is published for a hostname whose target no longer exists. Nothing answers on
+    this name today. Recorded as an observed DNS fact; no takeover attempt was made and
+    none should be. Withdrawing the record is the provider's fix.
+  probed: '2026-08-15'
+- host: docs.parsleyhealth.com
+  cname: d3sqky83ufbfgj.cloudfront.net
+  target_dns_status: NOERROR, no address records
+  severity_note: >-
+    CNAME published for a CloudFront distribution that returns no addresses. Same posture
+    and same fix as api.parsleyhealth.com.
+  probed: '2026-08-15'
 domains:
 - domain: parsleyhealth.com
   dnssec: false
@@ -30,5 +74,11 @@ domains:
   - 0 issue "sectigo.com"
   - 0 issue "letsencrypt.org"
   spf: true
+  spf_record: 'v=spf1 include:helpscoutemail.com include:_spf.google.com include:sendgrid.net include:shops.shopify.com include:mailgun.org ~all'
   dmarc: true
   dmarc_policy: quarantine
+  dmarc_record: 'v=DMARC1;p=quarantine;pct=100;rua=mailto:dmarc-reports@parsleyhealth.com'
+security_txt:
+  published: false
+  probed_hosts: [www.parsleyhealth.com, store.parsleyhealth.com, help.parsleyhealth.com]
+  result: 404 on all

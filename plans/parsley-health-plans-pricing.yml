@@ -1,0 +1,58 @@
+generated: '2026-08-15'
+method: searched
+source: >-
+  https://www.parsleyhealth.com/care (HTTP 200, 2026-08-15) and
+  https://store.parsleyhealth.com (Shopify storefront, HTTP 200)
+note: >-
+  Parsley Health sells NO API plans. There is no developer program, no metered API
+  pricing, no quota tier and nothing to buy that grants API access — so plan_count is 0
+  and plans[] is empty on purpose, not by omission. The two agent-reachable surfaces
+  (the UCP/MCP commerce endpoint and the Storefront GraphQL endpoint) are free and
+  anonymous; the commercial relationship they mediate is retail supplement purchase, not
+  API consumption. What the company DOES publish is consumer clinical membership
+  pricing, recorded verbatim below under consumer_membership so the commercial facts are
+  captured without being counted as API plans.
+plan_count: 0
+plans: []
+api_access_pricing:
+  model: none
+  note: The UCP/MCP and GraphQL storefront endpoints require no account, key or payment.
+consumer_membership:
+  product: Complete Care Plan
+  url: https://www.parsleyhealth.com/care
+  currency: USD
+  commitment: 12 month commitment required on monthly options
+  fsa_hsa_eligible: true
+  tiers:
+  - name: Complete Care — insurance, monthly
+    price: 150
+    period: month
+    note: Price reflects insurance coverage. Full value without insurance stated as $3,300/year.
+  - name: Complete Care — insurance, annual
+    price: 1500
+    period: year
+    note: Two months free versus monthly.
+  - name: Complete Care — self-pay, monthly
+    price: 275
+    period: month
+  - name: Complete Care — self-pay, annual
+    price: 2750
+    period: year
+    note: Two months free versus monthly.
+  included:
+  - 5 medical visits with a board-certified clinician
+  - 2 functional nutrition coaching sessions
+  - Access to advanced diagnostic testing
+  - Targeted care plan covering nutrition, sleep, stress, movement and treatment options
+  - Dedicated care coordinator
+  - Secure progress tracking dashboard
+  - Unlimited messaging and support
+  - 20% off professional-grade supplements
+  - 'Parsley Perks: member-exclusive discounts'
+  insurance:
+    in_network_nationwide: true
+    payers_named: [Aetna, Cigna, UnitedHealthcare, BlueCross BlueShield, Humana, Centene]
+retail:
+  store: https://store.parsleyhealth.com
+  catalog_size: 30 products listed on /products.json as of 2026-08-15
+  note: Supplements and wellness products; individually priced, no subscription tier published as a plan.
