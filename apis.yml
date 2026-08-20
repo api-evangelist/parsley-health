@@ -71,6 +71,25 @@ tags:
 - Membership
 - Digital Health
 - Consumer Health
+- E-Commerce
+- Agentic Commerce
+- MCP
+- Supplements
+tags_raw:
+- Company
+- Health
+- Healthcare
+- Telehealth
+- Telemedicine
+- Functional Medicine
+- Primary Care
+- Wellness
+- Nutrition
+- Diagnostics
+- Lab Testing
+- Membership
+- Digital Health
+- Consumer Health
 - Ecommerce
 - Agentic Commerce
 - MCP
@@ -94,6 +113,12 @@ apis:
   baseURL: https://store.parsleyhealth.com/api/ucp/mcp
   image: https://cdn-builder.parsleyhealth.com/api/v1/image/assets%2F996895949aaa465aa438b22f75b680b6%2F3ca4c568b1cc4dc7b064ff122217abe6
   tags:
+  - Agentic Commerce
+  - MCP
+  - E-Commerce
+  - GraphQL
+  - Supplements
+  tags_raw:
   - Agentic Commerce
   - MCP
   - Ecommerce
