@@ -141,6 +141,9 @@ apis:
     url: https://store.parsleyhealth.com/agents.md
   - type: LLMsTxt
     url: llms/parsley-health-store-llms.txt
+  x-surface: platform-generated
+  x-platform: shopify
+  x-platform-surface: ucp
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
