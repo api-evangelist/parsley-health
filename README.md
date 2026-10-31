@@ -64,38 +64,118 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Parsley Health is a physician-led functional medicine practice founded in 2016 by Dr. Robin
-Berzin, MD, headquartered in New York, NY. It delivers membership-based primary and specialty
-care nationwide via telehealth, with in-person clinics in New York City and Los Angeles.
+Parsley Health is a physician-led virtual and in-person medical practice founded in 2016 by Dr. Robin Berzin, MD, headquartered at 126 5th Ave, New York, NY, that delivers functional medicine as a membership-based primary and specialty care service. Members are matched with board-certified MD, DO, NP or PA clinicians who hold additional functional medicine fellowship training through Parsley and the Institute for Functional Medicine, and are supported by functional nutrition coaches, an RN care manager and a care coordinator. Care programs cover gut and digestive health, hormone balance, autoimmune and inflammatory conditions, unexplained symptoms, mental and emotional health, heart and metabolic health, longevity, perimenopause and menopause, fertility, pregnancy and postpartum, and environmental exposure. The membership bundles five medical visits, two nutrition coaching sessions, advanced diagnostic lab testing, a personalized care plan, a symptom tracking dashboard and unlimited messaging, priced at $150/month or $1,500/year with insurance and $275/month or $2,750/year self-pay. Parsley is available nationwide via telehealth with in-person care in New York City and Los Angeles, is in network with major commercial insurers including Aetna, Cigna, UnitedHealthcare, BlueCross BlueShield, Humana and Centene, and also operates a direct-to-consumer supplement store. Parsley Health is a consumer healthcare service rather than a developer platform: it publishes no developer portal, no API reference, no API keys and no OpenAPI, and its public GitHub organization contains internal engineering tooling (Docker images, GitHub Actions, lint configs, an Apollo Router fork) rather than any client SDK. It does, however, serve real agent-callable surfaces on its supplement store at store.parsleyhealth.com: a live anonymous Universal Commerce Protocol MCP endpoint exposing thirteen catalog, cart, checkout and order tools, an anonymous Shopify Storefront GraphQL endpoint, an llms.txt and agents.md written for agents, and OAuth 2.0 / OpenID Connect discovery documents. Those surfaces are provided by the Shopify commerce platform under Parsley Health's own hostname, cover retail supplement purchase only, and are governed by a published rule that agents must not complete payment without contemporaneous human approval. No clinical data is reachable by machine: there is no FHIR endpoint, no patient-access API and no appointment, lab or medical-record surface, and the member application at my.parsleyhealth.com remains an authenticated single-page app with no documented public API.
 
-- Website: https://www.parsleyhealth.com/
-- Care and pricing: https://www.parsleyhealth.com/care
-- Member application: https://my.parsleyhealth.com/
-- GitHub: https://github.com/parsleyhealth
-- Secondary market listing: https://forgeglobal.com/parsley-health_stock/
+**Areas:** Company · Health · Healthcare · Telehealth · Functional Medicine · Primary Care · Wellness · Nutrition · Diagnostics · Lab Testing · Membership · Digital Health
 
-## API posture
+## Parsley Health on APIs.io
 
-**Parsley Health publishes no public API.** Probed 2026-08-02 across every resolvable host:
+Everything profiled for Parsley Health is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/parsley-health/](https://apis.io/providers/parsley-health/)** — or go straight to one of the APIs or properties below.
 
-- No OpenAPI/Swagger at any host root (`/openapi.json`, `/openapi.yaml`, `/swagger.json`,
-  `/api-docs`, `/docs`) — all 404 on `www.parsleyhealth.com`.
-- No GraphQL endpoint, no MCP server, no A2A agent card, no AsyncAPI, no documented webhooks.
-- `api.`, `developer.`, `developers.`, `docs.`, `status.` and `trust.parsleyhealth.com` do not
-  resolve in DNS.
-- `my.parsleyhealth.com` and `app.parsleyhealth.com` are authenticated single-page apps behind a
-  catch-all that answers HTTP 200 `text/html` for every path, including `/.well-known/agent-card.json`
-  and `/openapi.json`. Those were rejected as SPA-shell false positives — see
-  `well-known/parsley-health-well-known.yml`.
-- The public GitHub org holds 12 repositories of internal engineering tooling (Docker images,
-  GitHub Actions, lint configs, an Apollo Router fork) — no client SDKs.
+### APIs (1)
 
-## Artifacts
+- [Parsley Health Store — UCP / MCP Agent Commerce](https://apis.io/apis/parsley-health/parsley-health-store-ucp-mcp-agent-commerce/) — The agent-callable surface of Parsley Health's direct-to-consumer supplement store. A live, anonymous Universal Commerce Protocol MCP endpoint exposes…
 
-| Path | What it holds |
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [Parsley Health Store — UCP / MCP commerce endpoint](https://apis.io/servers/parsley-health/parsley-health-store-ucp-mcp-commerce-endpoint/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Parsley Health Authentication](https://apis.io/security/parsley-health/parsley-health-authentication/)
+- [Parsley Health Domain Security](https://apis.io/security/parsley-health/parsley-health-domain-security/)
+
+#### OAuth scopes (1)
+
+The permissions the API asks for.
+
+- [Parsley Health Scopes](https://apis.io/scopes/parsley-health/parsley-health-scopes/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Parsley Health Plans Pricing](https://apis.io/plans/parsley-health/parsley-health-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Parsley Health Rate Limits](https://apis.io/rate-limits/parsley-health/parsley-health-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.parsleyhealth.com/)
+- [Pricing](https://www.parsleyhealth.com/care)
+- [Sign up](https://www.parsleyhealth.com/join/get-care)
+- [Support](https://www.parsleyhealth.com/contact)
+- [Blog](https://www.parsleyhealth.com/blog)
+- [Compliance](https://www.parsleyhealth.com/notice-of-privacy-practices)
+- [Terms of service](https://www.parsleyhealth.com/terms-of-use)
+- [Privacy policy](https://www.parsleyhealth.com/privacy)
+- [GitHub](https://github.com/parsleyhealth)
+
+## API Evangelist rating
+
+**Kin Score 30.4** — thin · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
 |---|---|
-| `packages/` | Three genuinely first-party npm packages — all lint configs, not API clients |
-| `conformance/` | Published healthcare regulatory posture: HIPAA Affiliated Covered Entity, telehealth informed consent, per-state clinical membership terms |
-| `security/` | Probed TLS/HSTS/DNSSEC/CAA/SPF/DMARC for the web and member-app hosts |
-| `well-known/` | Full `/.well-known/` probe record — zero documents found, SPA false positives labelled |
-| `llms/` | Generated `llms.txt` (Parsley publishes none; `/llms.txt` is 404) |
+| Discoverability | 75.8 |
+| Contract quality | 0.0 |
+| Contract governance | 18.2 |
+| Operational transparency | 2.6 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 52.6 |
+
+**Agent readiness 20.1** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | platform (partial credit) |
+| Auth Clarity | served (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | served (partial credit) |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | platform (partial credit) |
+| Pagination Ratio | na |
+| Operation Distinctiveness | na |
+
+**Regulatory alignment 36.7** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/parsley-health/](https://apis.io/providers/parsley-health/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Parsley Health: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/parsley-health/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
